@@ -82,12 +82,9 @@ class SceneMain extends Phaser.Scene {
         this.scoreText = this.add.text(16, 16, 'fishes: 0', { fontSize: '16px', fill: '#000'});  
         
         this.timerText = this.add.text(16, 464, 'Time Left: 0', { fontSize: '16px', fill: '#000'});
-
-        new BiggestFish(this);
     }
     
     update(){
-        console.log(this.threshhold);
     }
 
     // lets the fish off the hook, it within range of catching, add to score, otherwise it runs away
