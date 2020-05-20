@@ -57,13 +57,14 @@ class Hook extends Entity {
 
 
 class Fish extends Entity {
-    constructor(scene, image) 
+    constructor(scene, image, size) 
     {
         var x = Phaser.Math.Between(-100, -10);
         var y = Phaser.Math.Between(150, 470);
         var speed = Phaser.Math.Between(40, 70);
         super(scene, x, y, image);
         this.setVelocity(speed, 0);
+        this.size = size;
     }
 
     update() {
