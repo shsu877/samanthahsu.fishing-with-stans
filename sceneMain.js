@@ -9,6 +9,7 @@ class SceneMain extends Phaser.Scene {
     {     
         this.load.image('bg', 'assets/bg.png');
         this.load.image('hook', 'assets/fishing-line.png');
+        this.load.image('blank', 'assets/hook-fish-hitbox.png')
     
         this.load.image('big', 'assets/big-fish.png');
         this.load.image('medium', 'assets/med-fish.png');
@@ -24,7 +25,7 @@ class SceneMain extends Phaser.Scene {
         this.time.addEvent( {
             delay: 1000,
             callback: function() {
-                var fish = new Fish(this);
+                var fish = new Fish(this, 'small');
                 this.fishes.add(fish);
             },
             callbackScope: this,
@@ -40,18 +41,8 @@ class SceneMain extends Phaser.Scene {
     
         // HOOK
         this.hook = new Hook(this);
-        // this.hook = this.add.sprite(320, 0, 'hook');
-        // this.hook.scene.add.existing(this);
-        // this.hook.scene.physics.world.enableBody(this, 0);
-        // this.input.on('pointermove', function(pointer) {
-        //     this.hook.y = Phaser.Math.Clamp(pointer.y - 180, -50, 500);
-        //     }, this);
-        // this.input.on('pointerdown', function(pointer) 
-        // {
-        //    this.letFishGo();  
-        // }, this);
 
-        this.physics.add.collider(this.hook, this.fishes, this.hookFish());
+        this.physics.add.overlap(this.hook, this.fishes, this.hookFish);
 
         // SCORE
         this.scoreText = this.add.text(16, 16, 'fishes: 0', { fontSize: '16px', fill: '#000'});
@@ -59,20 +50,26 @@ class SceneMain extends Phaser.Scene {
     
     update ()
     {
+        // console.log(this.hook.y)
     }
 
     // lets the fish off the hook, it within range of catching, add to score, otherwise it runs away
     letFishGo(){
-        console.log("letFishGo");
-        if (false) {
-            score += 1; // gives more fishes for bigger fish
-            this.scoreText.setText('fishes: ' + score);
+        if (!this.hook.hasFish()) return; // if nothing on hook, nothing happens
+        
+        if (this.hook.y <= -45) {
+            this.score += 1; // gives more fishes for bigger fish
+            this.scoreText.setText('fishes: ' + this.score);
+            this.hook.removeFish(true);
+        } else {
+            this.hook.removeFish();
         }
     }
 
     // attaches fish to the hook if no current fish on the hook
-    hookFish() {
-        console.log("hookFish");
+    hookFish(hook, fish) {
+        if (!hook.hasFish())
+            hook.addFish(fish);
     }
 }
 
