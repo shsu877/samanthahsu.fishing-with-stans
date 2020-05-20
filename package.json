@@ -1,0 +1,25 @@
+{
+  "name": "fishing-with-stans",
+  "version": "1.0.0",
+  "description": "test for seal desktop application",
+  "main": "sprite.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Samantha Hsu",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^7.1.6",
+    "http-server": "^0.12.1",
+    "phaser": "^3.23.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samanthahsu/fishing-with-stans.git"
+  },
+  "bugs": {
+    "url": "https://github.com/samanthahsu/fishing-with-stans/issues"
+  },
+  "homepage": "https://github.com/samanthahsu/fishing-with-stans#readme"
+}
