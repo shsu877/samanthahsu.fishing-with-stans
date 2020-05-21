@@ -36,6 +36,12 @@ class SceneMain extends Phaser.Scene {
         this.load.image('medium', 'assets/med-fish.png');
         this.load.image('small', 'assets/small-fish.png');
         
+        this.load.image('banjo-polish', 'assets/debris-bp.png');
+        this.load.image('melodica', 'assets/debris-melodica.png');
+        this.load.image('tuba', 'assets/debris-tuba.png');
+
+        this.load.image('gobble', 'assets/gobble.png');
+        this.load.image('tentacle', 'assets/tentacle.png');
 
         // VARIABLES
         this.score = 0;
@@ -44,7 +50,7 @@ class SceneMain extends Phaser.Scene {
         this.level = 0;
         this.hook;
         this.fishes = this.add.group();
-        this.debris = this.add.group();
+        this.debrises = this.add.group();
         this.timerText;
         this.smallTimer;
         this.mediumTimer;
@@ -77,6 +83,7 @@ class SceneMain extends Phaser.Scene {
         // HOOK
         this.hook = new Hook(this);
         this.physics.add.overlap(this.hook, this.fishes, this.overlayHookFish);
+        this.physics.add.overlap(this.hook, this.debrises, this.overlayHookDebris);
 
         // SCORE
         this.scoreText = this.add.text(16, 16, 'fishes: 0', { fontSize: '16px', fill: '#000'});  
@@ -98,7 +105,6 @@ class SceneMain extends Phaser.Scene {
 
             if (this.score >= this.threshhold && this.threshhold < tf)
                 this.increasDifficulty();
-
         } else {
             this.hook.removeFish();
         }
@@ -160,6 +166,28 @@ class SceneMain extends Phaser.Scene {
             hook.addFish(fish);
         }
     }
+
+
+    // if hook has fish and is hit by debris, the fish escapes
+    overlayHookDebris(hook, debris) {
+        if (hook.fish != null) {
+            hook.removeFish(false);
+            console.log('fish removes');
+        }
+    }
+
+    generateDebris() {
+        this.time.addEvent({
+            delay: MEDIUM_SPAWN_TIME,
+            callback: function() {
+                console.log("debris ;)");
+                var debris = new Debris(this);
+                this.debrises.add(debris);
+    },
+            callbackScope: this,
+            loop: true
+        });
+    }
  
     // adds more fish variety && obstacles
     increasDifficulty() {
@@ -206,7 +234,10 @@ class SceneMain extends Phaser.Scene {
                     callbackScope: this,
                     loop: false
                 });
-        }   
+        } // swtich
+        // add more events
+        this.generateDebris();
+
     }
 }
 

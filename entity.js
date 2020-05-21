@@ -14,7 +14,7 @@ class Hook extends Entity {
     {
         super(scene, 320, 240, 'hook');
         this.setImmovable();
-        this.setCircle(20, -10, 400);
+        this.setCircle(10, -5, 410);
 
         this.fish = null;
 
@@ -26,8 +26,7 @@ class Hook extends Entity {
         scene.input.on('pointerdown', function(pointer) 
         {
             scene.letFishGo();  
-        }, this);
-        
+        }, this);      
     }
 
     // returns true if there is fish on hook
@@ -68,7 +67,6 @@ class Fish extends Entity {
             this.destroy();
         }
     }
-
     // play running away animation >> tween + anim >> bottom edge of screen >> destroy
     flee() {
         console.log("IM FREEEEEE");
@@ -122,4 +120,30 @@ class BiggestFish extends Fish {
         this.size = fishSize.BIGGEST;
         this.setCircle(100, 300, 50);
     }
+}
+
+// makes random debris appear
+class Debris extends Entity {
+    constructor(scene) {
+        var x = Phaser.Math.Between(680, 700);
+        var y = Phaser.Math.Between(200, 470);
+
+        var texture;
+        switch(Phaser.Math.Between(0, 2)) {
+            case 0:
+                texture = 'banjo-polish'
+                break;
+            case 1:
+                texture = 'melodica'
+                break;
+            case 2:
+                texture = 'tuba'    
+        }
+
+        super(scene, x, y, texture);
+        var speed = 50;
+        this.setVelocity(-speed, 0);
+        this.setScale(0.5);
+    }
+
 }
