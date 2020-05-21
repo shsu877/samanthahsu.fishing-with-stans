@@ -6,7 +6,7 @@ const t3 = 30;
 const tf = 60;
 const SMALL_SPAWN_TIME = 2000;
 const MEDIUM_SPAWN_TIME = 4000;
-const BIG_SPAWN_TIME = 8000;
+const BIG_SPAWN_TIME = 10000;
 const SMALL_SCORE = 1;
 const MEDIUM_SCORE = 5;
 const BIG_SCORE = 10;
@@ -55,6 +55,9 @@ class SceneMain extends Phaser.Scene {
         this.smallTimer;
         this.mediumTimer;
         this.bigTimer;
+        this.gabbles = this.add.group();
+        this.gabbleDirection = false;
+        this.gabbleEvent;
 
         // SPAWN THE FISHES!!!
         this.smallTimer = this.time.addEvent( {
@@ -72,7 +75,8 @@ class SceneMain extends Phaser.Scene {
             callback: function() {
                 // this.timerText.setText("Time Left: " + time);
             }
-        });
+        }); 
+
     }
     
     
@@ -84,6 +88,7 @@ class SceneMain extends Phaser.Scene {
         this.hook = new Hook(this);
         this.physics.add.overlap(this.hook, this.fishes, this.overlayHookFish);
         this.physics.add.overlap(this.hook, this.debrises, this.overlayHookDebris);
+        this.physics.add.overlap(this.hook, this.gabbles, this.overlayHookDebris);
 
         // SCORE
         this.scoreText = this.add.text(16, 16, 'fishes: 0', { fontSize: '16px', fill: '#000'});  
@@ -172,23 +177,44 @@ class SceneMain extends Phaser.Scene {
     overlayHookDebris(hook, debris) {
         if (hook.fish != null) {
             hook.removeFish(false);
-            console.log('fish removes');
         }
     }
 
+    // if hook has fish and is eaten by gabble
+    overlayHookGabble(hook, gabble) {
+        if (hook.fish != null) {
+            hook.removeFish(false);
+            console.log('gabble hook');
+        }
+    }
+    
     generateDebris() {
         this.time.addEvent({
-            delay: MEDIUM_SPAWN_TIME,
+            delay: BIG_SPAWN_TIME,
             callback: function() {
                 console.log("debris ;)");
                 var debris = new Debris(this);
                 this.debrises.add(debris);
-    },
+            },
             callbackScope: this,
             loop: true
         });
     }
  
+    // starts the gabblewunker chasing
+    generateGabble() {
+        this.gabbleEvent = this.time.addEvent({
+            delay: 10000,
+            callback: function() {
+                var gabble = new GabbleWinker(this, this.gabbleDirection);
+                this.gabbleDirection = !this.gabbleDirection; // flip the man!
+                this.gabbles.add(gabble);
+            },
+            callbackScope: this,
+            loop: true
+        });
+    }
+
     // adds more fish variety && obstacles
     increasDifficulty() {
         console.log("next threshhold " + this.threshhold);
@@ -216,7 +242,8 @@ class SceneMain extends Phaser.Scene {
                     },
                     callbackScope: this,
                     loop: true
-                });        
+                });   
+                this.generateGabble();    
                 this.level++;
                 break;
             case 2:
@@ -234,7 +261,7 @@ class SceneMain extends Phaser.Scene {
                     callbackScope: this,
                     loop: false
                 });
-        } // swtich
+        } // switch
         // add more events
         this.generateDebris();
 
