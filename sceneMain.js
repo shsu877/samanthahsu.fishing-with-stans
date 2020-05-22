@@ -14,6 +14,7 @@ const BIG_SCORE = 10;
 
 // GLOBAL
 var lureLeft = 20; // init value
+var sceneMainInst;
 
 const fishSize = {
     SMALL: 0,
@@ -80,6 +81,8 @@ class SceneMain extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+        sceneMainInst = this; // for calls from overlap
     }
     
     
@@ -152,24 +155,14 @@ class SceneMain extends Phaser.Scene {
         }
     }
 
-    endGame() {
-        this.time.addEvent({
-            delay: BIG_SPAWN_TIME,
-            callback: function() {
-                this.scene.start("SceneGameOver");
-            },
-            callbackScope: this,
-            loop: false
-        });
-    }
-
     // attaches fish to the hook if no current fish on the hook
     overlayHookFish(hook, fish) {
+        console.log(this);
         if (lureLeft <= 0) {
             // ford: i miscalculated our abilities - should've ripped it into more pieces
             // stan: told ya they'd be a great hit
             // ford: we're throwing paper into the ocean stanley
-            this.endGame();
+            sceneMainInst.endGame();
         }
 
 
@@ -182,6 +175,17 @@ class SceneMain extends Phaser.Scene {
             hook.removeFish(removeFishMode.MATRYOSHKA);
             hook.addFish(fish);
         }
+    }
+
+    endGame() {
+        this.time.addEvent({
+            delay: BIG_SPAWN_TIME,
+            callback: function() {
+                this.scene.start("SceneGameOver");
+            },
+            callbackScope: this,
+            loop: false
+        });
     }
 
 
