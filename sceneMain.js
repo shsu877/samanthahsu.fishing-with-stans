@@ -1,21 +1,31 @@
 
 // CONSTANTS
-const t1 = 2;
-const t2 = 5;
-const t3 = 30;
-const tf = 60;
+const t1 = 5;
+const t2 = 20;
+const t3 = 60;
+const t4 = 80;
+const tf = 100;
 const SMALL_SPAWN_TIME = 2000;
-const MEDIUM_SPAWN_TIME = 4000;
+const MEDIUM_SPAWN_TIME = 6000;
 const BIG_SPAWN_TIME = 10000;
 const SMALL_SCORE = 1;
 const MEDIUM_SCORE = 5;
 const BIG_SCORE = 10;
+
+// GLOBAL
+var lureLeft = 20; // init value
 
 const fishSize = {
     SMALL: 0,
     MEDIUM: 1,
     BIG: 2,
     BIGGEST: 3
+}
+
+const removeFishMode = {
+    ESCAPE: 0,
+    MATRYOSHKA: 1, // gets eaten by bigger
+    CAUGHT: 2,
 }
 
 class SceneMain extends Phaser.Scene {
@@ -51,6 +61,7 @@ class SceneMain extends Phaser.Scene {
         this.hook;
         this.fishes = this.add.group();
         this.debrises = this.add.group();
+        this.tentacles = this.add.group();
         this.timerText;
         this.smallTimer;
         this.mediumTimer;
@@ -69,14 +80,6 @@ class SceneMain extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-
-        this.globalTimer = this.time.addEvent({
-            delay: 1000,
-            callback: function() {
-                // this.timerText.setText("Time Left: " + time);
-            }
-        }); 
-
     }
     
     
@@ -86,6 +89,7 @@ class SceneMain extends Phaser.Scene {
     
         // HOOK
         this.hook = new Hook(this);
+         
         this.physics.add.overlap(this.hook, this.fishes, this.overlayHookFish);
         this.physics.add.overlap(this.hook, this.debrises, this.overlayHookDebris);
         this.physics.add.overlap(this.hook, this.gabbles, this.overlayHookDebris);
@@ -94,9 +98,15 @@ class SceneMain extends Phaser.Scene {
         this.scoreText = this.add.text(16, 16, 'fishes: 0', { fontSize: '16px', fill: '#000'});  
         
         this.timerText = this.add.text(16, 464, 'Time Left: 0', { fontSize: '16px', fill: '#000'});
+
+        this.tentacles.add(new Tentacle(this, false));
+
     }
     
     update(){
+        for (var i = 0; i < this.tentacles.getChildren().length; i++) {
+            this.tentacles.getChildren()[i].update(this.hook);
+        }
     }
 
     // lets the fish off the hook, it within range of catching, add to score, otherwise it runs away
@@ -106,12 +116,12 @@ class SceneMain extends Phaser.Scene {
         if (this.hook.y <= -45) {
             this.increaseScore(this.hook.fish); // gives more fishes for bigger fish
             this.scoreText.setText('fishes: ' + this.score);
-            this.hook.removeFish(true);
+            this.hook.removeFish(removeFishMode.CAUGHT);
 
             if (this.score >= this.threshhold && this.threshhold < tf)
                 this.increasDifficulty();
         } else {
-            this.hook.removeFish();
+            this.hook.removeFish(removeFishMode.ESCAPE);
         }
     }
    
@@ -130,15 +140,15 @@ class SceneMain extends Phaser.Scene {
                 break;
             case fishSize.BIGGEST:
                 // stan: what why ain't the counter going up? Better not be like on of those dumb money suckling arcade games >:[
-                    this.time.addEvent({
-                        delay: BIG_SPAWN_TIME,
-                        callback: function() {
-                            this.add.image(0, 0, 'voidfish').setOrigin(0, 0);
-                            this.endGame();
-                        },
-                        callbackScope: this,
-                        loop: false
-                    });           
+                this.time.addEvent({
+                    delay: BIG_SPAWN_TIME,
+                    callback: function() {
+                        this.add.image(0, 0, 'voidfish').setOrigin(0, 0);
+                        this.endGame();
+                    },
+                    callbackScope: this,
+                    loop: false
+                });           
         }
     }
 
@@ -155,19 +165,21 @@ class SceneMain extends Phaser.Scene {
 
     // attaches fish to the hook if no current fish on the hook
     overlayHookFish(hook, fish) {
+        if (lureLeft <= 0) {
+            // ford: i miscalculated our abilities - should've ripped it into more pieces
+            // stan: told ya they'd be a great hit
+            // ford: we're throwing paper into the ocean stanley
+            this.endGame();
+        }
+
 
         if (fish.size == fishSize.SMALL && !hook.hasFish()) {
             hook.addFish(fish);
         } else if (!hook.hasFish()) {
             return;
-        } else if (fish.size == fishSize.MEDIUM && hook.fish.size == fishSize.SMALL) {
-            hook.removeFish(false);
-            hook.addFish(fish);
-        } else if (fish.size == fishSize.BIG && hook.fish.size == fishSize.MEDIUM) {
-            hook.removeFish(false);
-            hook.addFish(fish);
-        } else if (fish.size == fishSize.BIGGEST && hook.fish.size == fishSize.BIG) {
-            hook.removeFish(false);
+        } else if (
+            (fish.size == fishSize.MEDIUM && hook.fish.size == fishSize.SMALL) || (fish.size == fishSize.BIG && hook.fish.size == fishSize.MEDIUM) || (fish.size == fishSize.BIGGEST && hook.fish.size == fishSize.BIG)) {
+            hook.removeFish(removeFishMode.MATRYOSHKA);
             hook.addFish(fish);
         }
     }
@@ -175,24 +187,22 @@ class SceneMain extends Phaser.Scene {
 
     // if hook has fish and is hit by debris, the fish escapes
     overlayHookDebris(hook, debris) {
-        if (hook.fish != null) {
-            hook.removeFish(false);
+        if (hook.hasFish()) {
+            hook.removeFish(removeFishMode.ESCAPE);
         }
     }
 
     // if hook has fish and is eaten by gabble
     overlayHookGabble(hook, gabble) {
         if (hook.fish != null) {
-            hook.removeFish(false);
-            console.log('gabble hook');
+            hook.removeFish(removeFishMode.ESCAPE);
         }
     }
     
     generateDebris() {
-        this.time.addEvent({
+        this.debrisEvent = this.time.addEvent({
             delay: BIG_SPAWN_TIME,
             callback: function() {
-                console.log("debris ;)");
                 var debris = new Debris(this);
                 this.debrises.add(debris);
             },
@@ -215,6 +225,20 @@ class SceneMain extends Phaser.Scene {
         });
     }
 
+
+    // starts the tentacle grabbing
+    generateTentacles() {
+        this.tentEvent = this.time.addEvent({
+            delay: 10500,
+            callback: function() {
+                var tent = new Tentacle(this, !this.gabbleDirection);
+                this.tentacles.add(tent);
+            },
+            callbackScope: this,
+            loop: true
+        });
+    }
+
     // adds more fish variety && obstacles
     increasDifficulty() {
         console.log("next threshhold " + this.threshhold);
@@ -229,8 +253,8 @@ class SceneMain extends Phaser.Scene {
                     },
                     callbackScope: this,
                     loop: true
-                });        
-                this.level++;
+                });     
+                this.generateDebris();   
                 break;
             case 1:
                 this.threshhold = t3;
@@ -244,26 +268,39 @@ class SceneMain extends Phaser.Scene {
                     loop: true
                 });   
                 this.generateGabble();    
-                this.level++;
                 break;
             case 2:
+                this.threshhold = t4;
+                this.generateTentacles();
+                break;
+            case 3:
                 this.threshhold = tf;
-                this.smallTimer.destroy();
-                this.mediumTimer.destroy();
-                this.bigTimer.destroy();
                 console.log("Biggist Fish!!!");
                 this.time.addEvent({
                     delay: BIG_SPAWN_TIME,
                     callback: function() {
                         var fish = new BiggestFish(this);
                         this.fishes.add(fish);
+                        this.destroyFishes();
                     },
                     callbackScope: this,
                     loop: false
-                });
+                });            
         } // switch
         // add more events
-        this.generateDebris();
+        this.level++;
+        
+    }
+
+    destroyFishes() {
+        this.smallTimer.destroy();
+        this.mediumTimer.destroy();
+        this.bigTimer.destroy();
+    }
+
+    destroyEnemies() {
+        this.gabbleEvent.destroy();
+        this.tentEvent.destroy();
 
     }
 }

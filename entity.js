@@ -9,6 +9,8 @@ class Entity extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
+const HOOK_TOP_CLAMP = -100;
+const HOOK_BOT_CLAMP = 500;
 class Hook extends Entity {
     constructor(scene)
     {
@@ -19,15 +21,15 @@ class Hook extends Entity {
         this.fish = null;
 
         scene.input.on('pointermove', function(pointer) {
-            this.y = Phaser.Math.Clamp(pointer.y - 180, -50, 500);
+            this.y = Phaser.Math.Clamp(pointer.y - 180, HOOK_TOP_CLAMP, HOOK_BOT_CLAMP);
             if (this.hasFish())
                 this.setFishY();
         }, this);
         scene.input.on('pointerdown', function(pointer) 
         {
             scene.letFishGo();  
-        }, this);      
-    }
+        }, this);  
+            }
 
     // returns true if there is fish on hook
     hasFish() {
@@ -44,13 +46,20 @@ class Hook extends Entity {
         this.fish.setRotation(-Math.PI/2);
     }
 
-    removeFish(isCaught) {
-        if (isCaught) {
-            this.fish.destroy();
-        } else {
-            this.fish.flee();
+    removeFish(mode) {
+        switch (mode) {
+            case removeFishMode.CAUGHT:
+                this.fish.destroy();
+                lureLeft--;
+                break;
+            case removeFishMode.MATRYOSHKA:
+                this.fish.destroy();
+                break;
+            case removeFishMode.ESCAPE:
+                this.fish.flee(); 
+                lureLeft--;
         }
-        this.fish = null;
+        this.fish = null;  
     }
 }
 
@@ -77,7 +86,7 @@ class Debris extends Entity {
         var speed = 50;
         this.setVelocity(-speed, 0);
         this.setScale(0.5);
-        this.setRotation(Phaser.Math.Between(0, Math.PI/2))
+        this.setRotation(Phaser.Math.Between(0, Math.PI/2));
     }
 
     update() {
@@ -118,5 +127,45 @@ class GabbleWinker extends Entity {
             this.destroy();
         }
     }
+}
 
+const TENT_Y = 150;
+const TENT_V = 50;
+const TENT_LMAX = 160;
+const TENT_RMAX = 500;
+const TENT_VAR = 20;
+class Tentacle extends Entity {
+
+    constructor(scene, isLeft) {
+        if (isLeft) {
+            super(scene, 0, TENT_Y, 'tentacle');
+            this.setVelocityX(TENT_V);
+        } else {
+            super(scene, 640, TENT_Y, 'tentacle');
+            this.setVelocityX(-TENT_V);
+            this.setFlip(true);
+        }
+        this.isLeft = isLeft;
+        this.scene = scene;
+    }
+
+    update(hook) { 
+        if (this.isLeft) {
+            if ( hook.hasFish() && this.x >= TENT_LMAX - TENT_VAR &&
+                hook.y >= HOOK_TOP_CLAMP + TENT_VAR)
+                hook.removeFish(removeFishMode.MATRYOSHKA);
+            if (this.x >= TENT_LMAX) {
+                this.setVelocityX(-TENT_V);
+            }
+        } else {
+            if (hook.hasFish() && this.x <= TENT_RMAX + TENT_VAR && hook.y >= HOOK_TOP_CLAMP + TENT_VAR)
+                hook.removeFish(removeFishMode.MATRYOSHKA);
+            if (this.x <= TENT_RMAX)
+                this.setVelocityX(TENT_V);
+        }
+
+        if (this.x < -300 || this.x > 200 + 640) {
+            this.destroy();
+        }
+    }
 }
