@@ -131,8 +131,8 @@ class GabbleWinker extends Entity {
     }
 }
 
-const TENT_Y = 150;
-const TENT_V = 50;
+const TENT_Y = 120;
+const TENT_VEL = 50;
 const TENT_LMAX = 160;
 const TENT_RMAX = 500;
 const TENT_VAR = 20;
@@ -141,10 +141,10 @@ class Tentacle extends Entity {
     constructor(scene, isLeft) {
         if (isLeft) {
             super(scene, 0, TENT_Y, 'tentacle');
-            this.setVelocityX(TENT_V);
+            this.setVelocityX(TENT_VEL);
         } else {
             super(scene, 640, TENT_Y, 'tentacle');
-            this.setVelocityX(-TENT_V);
+            this.setVelocityX(-TENT_VEL);
             this.setFlip(true);
         }
         this.isLeft = isLeft;
@@ -157,13 +157,13 @@ class Tentacle extends Entity {
                 hook.y >= HOOK_TOP_CLAMP + TENT_VAR)
                 hook.removeFish(removeFishMode.MATRYOSHKA);
             if (this.x >= TENT_LMAX) {
-                this.setVelocityX(-TENT_V);
+                this.setVelocityX(-TENT_VEL);
             }
         } else {
             if (hook.hasFish() && this.x <= TENT_RMAX + TENT_VAR && hook.y >= HOOK_TOP_CLAMP + TENT_VAR)
                 hook.removeFish(removeFishMode.MATRYOSHKA);
             if (this.x <= TENT_RMAX)
-                this.setVelocityX(TENT_V);
+                this.setVelocityX(TENT_VEL);
         }
 
         if (this.x < -300 || this.x > 200 + 640) {
