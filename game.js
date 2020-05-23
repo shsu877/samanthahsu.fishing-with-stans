@@ -1,17 +1,27 @@
+const GAMEWIDTH = 640;
+const GAMEHEIGHT = 480;
+
 var config = {
     type: Phaser.AUTO,
-    width: 640,
-    height: 480,
+    width: GAMEWIDTH,
+    height: GAMEHEIGHT,
+
+    scale: {
+        // mode: Phaser.Scale.FIT,
+        // autoCenter: Phaser.DOM.CENTER_BOTH,
+    },
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            // debug: true
         }
     },
     scene: [
         SceneMainMenu,
         SceneMain,
-        SceneGameOver
+        SceneCutsceneStart,
+        SceneGameLose,
+        SceneGameWin
     ]
 };
 

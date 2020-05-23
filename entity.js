@@ -9,19 +9,20 @@ class Entity extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
-const HOOK_TOP_CLAMP = -100;
-const HOOK_BOT_CLAMP = 500;
+const HOOK_TOP_CLAMP = -150;
+const HOOK_BOT_CLAMP = 230;
+
 class Hook extends Entity {
     constructor(scene)
     {
         super(scene, 320, 240, 'hook');
         this.setImmovable();
-        this.setCircle(10, -5, 410);
+        this.setCircle(10, -5, 460);
 
         this.fish = null;
 
         scene.input.on('pointermove', function(pointer) {
-            this.y = Phaser.Math.Clamp(pointer.y - 180, HOOK_TOP_CLAMP, HOOK_BOT_CLAMP);
+            this.y = Phaser.Math.Clamp(pointer.y - 230, HOOK_TOP_CLAMP, HOOK_BOT_CLAMP);
             if (this.hasFish())
                 this.setFishY();
         }, this);
@@ -36,7 +37,7 @@ class Hook extends Entity {
         return this.fish != null;
     }
 
-    setFishY() { this.fish.y = Phaser.Math.Clamp(this.y + 200, -50, 500);}
+    setFishY() { this.fish.y = Phaser.Math.Clamp(this.y + 250, -50, 500);}
 
     addFish(fish) {
         this.fish = fish;
@@ -59,7 +60,8 @@ class Hook extends Entity {
                 this.fish.flee(); 
                 lureLeft--;
         }
-        this.fish = null;  
+        this.fish = null;
+        this.scene.lureText.setText(LURE_TEXT + lureLeft); 
     }
 }
 
@@ -87,6 +89,7 @@ class Debris extends Entity {
         this.setVelocity(-speed, 0);
         this.setScale(0.5);
         this.setRotation(Phaser.Math.Between(0, Math.PI/2));
+        this.setDepth(1);
     }
 
     update() {
@@ -94,7 +97,6 @@ class Debris extends Entity {
             this.destroy();
         }
     }
-
 }
 
 class GabbleWinker extends Entity {

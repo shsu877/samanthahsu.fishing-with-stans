@@ -11,9 +11,10 @@ const BIG_SPAWN_TIME = 10000;
 const SMALL_SCORE = 1;
 const MEDIUM_SCORE = 5;
 const BIG_SCORE = 10;
+const LURE_TEXT = "lure left: ";
 
 // GLOBAL
-var lureLeft = 20; // init value
+var lureLeft = 50; // init value
 var sceneMainInst;
 
 const fishSize = {
@@ -63,7 +64,7 @@ class SceneMain extends Phaser.Scene {
         this.fishes = this.add.group();
         this.debrises = this.add.group();
         this.tentacles = this.add.group();
-        this.timerText;
+        this.lureText;
         this.smallTimer;
         this.mediumTimer;
         this.bigTimer;
@@ -89,6 +90,13 @@ class SceneMain extends Phaser.Scene {
     create() {
         // add background image
         this.add.image(0, 0, 'bg').setOrigin(0,0);
+
+        // add metrics
+        const textX = 400;
+        this.scoreText = this.add.text(textX, 16, 'fishes: 0', { fontSize: '16px', fill: '#000'});  
+        
+        this.lureText = this.add.text(textX, 30, LURE_TEXT + lureLeft, { fontSize: '16px', fill: '#000'});
+
     
         // HOOK
         this.hook = new Hook(this);
@@ -97,13 +105,7 @@ class SceneMain extends Phaser.Scene {
         this.physics.add.overlap(this.hook, this.debrises, this.overlayHookDebris);
         this.physics.add.overlap(this.hook, this.gabbles, this.overlayHookDebris);
 
-        // SCORE
-        this.scoreText = this.add.text(16, 16, 'fishes: 0', { fontSize: '16px', fill: '#000'});  
-        
-        this.timerText = this.add.text(16, 464, 'Time Left: 0', { fontSize: '16px', fill: '#000'});
-
         this.tentacles.add(new Tentacle(this, false));
-
     }
     
     update(){
@@ -116,7 +118,7 @@ class SceneMain extends Phaser.Scene {
     letFishGo(){
         if (!this.hook.hasFish()) return; // if nothing on hook, nothing happens
         
-        if (this.hook.y <= -45) {
+        if (this.hook.y <= HOOK_TOP_CLAMP + 30) {
             this.increaseScore(this.hook.fish); // gives more fishes for bigger fish
             this.scoreText.setText('fishes: ' + this.score);
             this.hook.removeFish(removeFishMode.CAUGHT);
@@ -147,7 +149,7 @@ class SceneMain extends Phaser.Scene {
                     delay: BIG_SPAWN_TIME,
                     callback: function() {
                         this.add.image(0, 0, 'voidfish').setOrigin(0, 0);
-                        this.endGame();
+                        this.endGame(true);
                     },
                     callbackScope: this,
                     loop: false
@@ -157,12 +159,11 @@ class SceneMain extends Phaser.Scene {
 
     // attaches fish to the hook if no current fish on the hook
     overlayHookFish(hook, fish) {
-        console.log(this);
         if (lureLeft <= 0) {
             // ford: i miscalculated our abilities - should've ripped it into more pieces
             // stan: told ya they'd be a great hit
             // ford: we're throwing paper into the ocean stanley
-            sceneMainInst.endGame();
+            sceneMainInst.endGame(false);
         }
 
 
@@ -177,17 +178,21 @@ class SceneMain extends Phaser.Scene {
         }
     }
 
-    endGame() {
+    // goes to ending scene after a delay
+    endGame(isWin) {
         this.time.addEvent({
             delay: BIG_SPAWN_TIME,
             callback: function() {
-                this.scene.start("SceneGameOver");
+                if (isWin) {
+                    this.scene.start("SceneGameWin");
+                } else {
+                    this.scene.start("SceneGameLose");
+                }
             },
             callbackScope: this,
             loop: false
         });
     }
-
 
     // if hook has fish and is hit by debris, the fish escapes
     overlayHookDebris(hook, debris) {
@@ -279,7 +284,7 @@ class SceneMain extends Phaser.Scene {
                 break;
             case 3:
                 this.threshhold = tf;
-                console.log("Biggist Fish!!!");
+                console.log("BIG FISH INCOMING");
                 this.time.addEvent({
                     delay: BIG_SPAWN_TIME,
                     callback: function() {
@@ -291,9 +296,7 @@ class SceneMain extends Phaser.Scene {
                     loop: false
                 });            
         } // switch
-        // add more events
         this.level++;
-        
     }
 
     destroyFishes() {
