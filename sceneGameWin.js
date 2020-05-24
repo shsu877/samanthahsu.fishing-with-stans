@@ -4,6 +4,8 @@ class SceneGameWin extends Phaser.Scene {
   }
 
   preload() {
+    this.add.text(secretTextX, secretTextY, secretText3, secretTextStyle);
+
     this.load.image('sa1w', 'assets/cutscene-win-a1.png');
     this.load.image('sb1w', 'assets/cutscene-win-b1.png');
     this.load.image('sb2w', 'assets/cutscene-win-b2.png');
@@ -29,7 +31,6 @@ class SceneGameWin extends Phaser.Scene {
 
   create() {
     this.createArray();
-    console.log("YOU WIN!");
     var seqIndex = 0;
     this.add.image(0, 0, this.winSeqText[seqIndex].image).setOrigin(0,0);
 
@@ -62,9 +63,9 @@ class SceneGameWin extends Phaser.Scene {
       new Snapshot('sb2w', speaker.FORD, "..."),
 
       new Snapshot('sc1w', speaker.FORD, "Apparently she’s been teaching music to the local aquatic population for generations."),
-      new Snapshot('sc1w', speaker.FORD, "Who knew fish have such a great capacity for intelligence?"),
+      new Snapshot('sc1w', speaker.FORD, "Who knew fish possess such great capacity for intelligence?"),
       new Snapshot('sc1w', speaker.STAN, "Yeah, yeah, but why is she attacking our boat?"),
-      new Snapshot('sc2w', speaker.FORD, "The fish we’ve been catching appear to be her band members..."),
+      new Snapshot('sc2w', speaker.FORD, "The fish we’ve been catching what appear to be her band members..."),
       new Snapshot('sc2w', speaker.FORD, "She wants them back, Stanley."),
       new Snapshot('sc2w', speaker.STAN, "Well, what are we waiting for?"),
       new Snapshot('sc2w', speaker.FORD, "(sigh)"),

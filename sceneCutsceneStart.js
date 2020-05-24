@@ -51,13 +51,14 @@ startSeqText.push(
   new Snapshot('sf5', speaker.STAN, "Don’t even dream about it!"),
 )
 
-
 class SceneCutsceneStart extends Phaser.Scene {
     constructor() {      
       super({ key: "SceneCutsceneStart" });
     }
   
     preload() {
+      this.add.text(secretTextX, secretTextY, secretText1, secretTextStyle);
+
       this.load.image('sa1', 'assets/cutscene-start-a1.png');
       this.load.image('sa2', 'assets/cutscene-start-a2.png');
       this.load.image('sb1', 'assets/cutscene-start-b1.png');
@@ -102,7 +103,8 @@ class SceneCutsceneStart extends Phaser.Scene {
 
       this.input.on('pointerdown', function(pointer) 
       {
-        if (seqIndex >= startSeqText.length - 1) {
+        if (seqIndex >= startSeqText.length) return;
+        if (seqIndex == startSeqText.length - 1) {
           var img = this.add.image(GAMEWIDTH/2,GAMEHEIGHT/2,'bg-full');
           const delay = 3000;
           this.tweens.add({
@@ -115,6 +117,7 @@ class SceneCutsceneStart extends Phaser.Scene {
           setTimeout(()=> {
             this.scene.start("SceneMain"); 
           }, delay)
+          seqIndex++;
           return;
         }
         seqIndex++;
