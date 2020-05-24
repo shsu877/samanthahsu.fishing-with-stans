@@ -18,10 +18,11 @@ const MERMANDO_TEX = "mermando";
 const MCGUCKET_TEX = "mcgucket";
 const DURLAND_TEX1 = "durland1";
 const DURLAND_TEX2 = "durland2";
+const STARTING_LURE = 50;
 
 
 // GLOBAL
-var lureLeft; // init value
+var lureLeft = STARTING_LURE; // init value
 var sceneMainInst;
 
 const fishSize = {
@@ -115,11 +116,10 @@ class SceneMain extends Phaser.Scene {
         this.physics.add.overlap(this.hook, this.debrises, this.overlayHookDebris);
         this.physics.add.overlap(this.hook, this.gabbles, this.overlayHookDebris);
 
-        lureLeft = 50;
-
+        this.lureLeft = STARTING_LURE;
     }
     
-    update(){
+    update() {
         for (var i = 0; i < this.tentacles.getChildren().length; i++) {
             this.tentacles.getChildren()[i].update(this.hook);
         }
@@ -195,7 +195,7 @@ class SceneMain extends Phaser.Scene {
     // goes to ending scene after a delay
     endGame(isWin) {
         this.time.addEvent({
-            delay: BIG_SPAWN_TIME/2,
+            delay: BIG_SPAWN_TIME / 2,
             callback: function() {
                 if (isWin) {
                     this.scene.start("SceneGameWin");
