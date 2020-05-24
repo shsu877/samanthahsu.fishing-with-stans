@@ -1,18 +1,24 @@
 
 // CONSTANTS
-const t1 = 0;
-const t2 = 1;
-const t3 = 2;
-const t4 = 3;
-const tf = 4;
+const t1 = 10;
+const t2 = 40;
+const t3 = 80;
+const t4 = 120;
+const tf = 160;
 const SMALL_SPAWN_TIME = 2000;
 const MEDIUM_SPAWN_TIME = 6000;
 const BIG_SPAWN_TIME = 10000;
 const SMALL_SCORE = 1;
 const MEDIUM_SCORE = 5;
 const BIG_SCORE = 10;
-const LURE_TEXT = "lure left: ";
+const LURE_TEXT = "bait left: ";
 const TRANSITION_TIME = 10500;
+
+const MERMANDO_TEX = "mermando";
+const MCGUCKET_TEX = "mcgucket";
+const DURLAND_TEX1 = "durland1";
+const DURLAND_TEX2 = "durland2";
+
 
 // GLOBAL
 var lureLeft = 50; // init value
@@ -56,6 +62,11 @@ class SceneMain extends Phaser.Scene {
         this.load.image('gobble', 'assets/gobble.png');
         this.load.image('tentacle', 'assets/tentacle.png');
 
+        this.load.image(MERMANDO_TEX, 'assets/mermando.png');
+        this.load.image(MCGUCKET_TEX, 'assets/mcgucket.png');
+        this.load.image(DURLAND_TEX1, 'assets/durland-01.png');
+        this.load.image(DURLAND_TEX2, 'assets/durland-02.png');
+
         // VARIABLES
         this.score = 0;
         this.scoreText;
@@ -70,6 +81,7 @@ class SceneMain extends Phaser.Scene {
         this.gabbleDirection = false;
         this.gabbleEvent;
         this.activeEvents = []; // should contain every single time event
+        this.dialog = new Dialog(this);
 
         this.spawnSmall();
         sceneMainInst = this; // for calls from overlap
@@ -103,12 +115,17 @@ class SceneMain extends Phaser.Scene {
         this.physics.add.overlap(this.hook, this.fishes, this.overlayHookFish);
         this.physics.add.overlap(this.hook, this.debrises, this.overlayHookDebris);
         this.physics.add.overlap(this.hook, this.gabbles, this.overlayHookDebris);
+
     }
     
     update(){
         for (var i = 0; i < this.tentacles.getChildren().length; i++) {
             this.tentacles.getChildren()[i].update(this.hook);
         }
+
+        if (this.biggestFish != undefined && this.biggestFish.x >= GAMEWIDTH)
+            sceneMainInst.endGame(false);
+        if (this.biggestFish != undefined) console.log(this.biggestFish.x);
     }
 
     // lets the fish off the hook, it within range of catching, add to score, otherwise it runs away
@@ -121,7 +138,7 @@ class SceneMain extends Phaser.Scene {
             this.hook.removeFish(removeFishMode.CAUGHT);
 
             if (this.score >= this.threshhold && this.threshhold < tf)
-                this.increasDifficulty();
+                this.increaseDifficulty();
         } else {
             this.hook.removeFish(removeFishMode.ESCAPE);
         }
@@ -142,7 +159,7 @@ class SceneMain extends Phaser.Scene {
             case fishSize.BIGGEST:
                 // stan: what why ain't the counter going up? Better not be like on of those dumb money suckling arcade games >:[
                 this.time.addEvent({
-                    delay: BIG_SPAWN_TIME,
+                    delay: BIG_SPAWN_TIME/2,
                     callback: function() {
                         this.add.image(0, 0, 'voidfish').setOrigin(0, 0);
                         this.endGame(true);
@@ -155,13 +172,13 @@ class SceneMain extends Phaser.Scene {
 
     // attaches fish to the hook if no current fish on the hook
     overlayHookFish(hook, fish) {
-        if (lureLeft <= 0) {
+        if (lureLeft == 0) {
             // ford: i miscalculated our abilities - should've ripped it into more pieces
             // stan: told ya they'd be a great hit
             // ford: we're throwing paper into the ocean stanley
             sceneMainInst.endGame(false);
+            return;
         }
-
 
         if (fish.size == fishSize.SMALL && !hook.hasFish()) {
             hook.addFish(fish);
@@ -177,7 +194,7 @@ class SceneMain extends Phaser.Scene {
     // goes to ending scene after a delay
     endGame(isWin) {
         this.time.addEvent({
-            delay: BIG_SPAWN_TIME,
+            delay: BIG_SPAWN_TIME/2,
             callback: function() {
                 if (isWin) {
                     this.scene.start("SceneGameWin");
@@ -254,17 +271,19 @@ class SceneMain extends Phaser.Scene {
     }
 
     // adds more fish variety && obstacles
-    increasDifficulty() {
+    increaseDifficulty() {
         switch (this.level) {
             case 0:
                 this.threshhold = t2;
                 this.spawnMed();
-                this.generateDebris();   
+                this.generateDebris(); 
                 break;
             case 1:
                 this.threshhold = t3;
                 this.destroyEvents();
-                console.log("SEND IN MCGUCKET");
+                setTimeout(()=> {
+                    new Mcgucket(this);
+                }, TRANSITION_TIME/2)
 
                 setTimeout(()=> {
                     this.spawnSmall();
@@ -276,9 +295,11 @@ class SceneMain extends Phaser.Scene {
                 break;
             case 2:
                 this.threshhold = t4;
-                this.destroyEvents();
-                console.log("The tentacles are coming!");
-                
+                this.destroyEvents(); 
+                setTimeout(()=> {
+                    new Mermando(this);               
+                }, TRANSITION_TIME/2)
+
                 setTimeout(()=> {
                     this.spawnSmall();
                     this.spawnMed();
@@ -291,12 +312,12 @@ class SceneMain extends Phaser.Scene {
             case 3:
                 this.threshhold = tf;
                 this.destroyEvents();
-                console.log("durland happens");
 
                 setTimeout(()=> {
                     this.spawnSmall();
                     this.spawnMed();
                     this.spawnBig();
+                    this.durland = new Durland(this);
                 }, TRANSITION_TIME);
 
                 setTimeout(()=> {
@@ -306,17 +327,18 @@ class SceneMain extends Phaser.Scene {
                 setTimeout(()=> {
                     var fish = new BiggestFish(this);
                     this.fishes.add(fish);
+                    this.biggestFish = fish;
                 }, TRANSITION_TIME * 3);
+
+                setTimeout(()=> {
+                    this.durland.setFlip(true);
+                }, TRANSITION_TIME * 4);
         } // switch
         this.level++;
     }
 
-    destroyEvents() {
-        console.log(this.activeEvents.length);
-        
+    destroyEvents() {        
         for (var i = 0; i < this.activeEvents.length; i++) {
-            console.log(this.activeEvents[i]);
-            console.log(this.activeEvents[i]);
             this.activeEvents[i].destroy();
         }
     }

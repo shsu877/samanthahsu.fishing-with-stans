@@ -43,10 +43,10 @@ class MediumFish extends Fish {
 
 class BigFish extends Fish {
     constructor(scene) {
-        var x = Phaser.Math.Between(-100, -40);
-        var y = Phaser.Math.Between(200, 470);
+        var x = -100;
+        var y = 300;
         super(scene, x, y, 'big');
-        var speed = Phaser.Math.Between(30, 50);
+        var speed = 40;
         this.setVelocity(speed, 0);
         this.size = fishSize.BIG;
         this.setCircle(30, 130, 40);
@@ -56,11 +56,11 @@ class BigFish extends Fish {
 class BiggestFish extends Fish {
     constructor(scene) {
         var x = -150;
-        var y = 300;
+        var y = 250;
         super(scene, x, y, 'biggest');
         var speed = 10;
         this.setVelocity(speed, 0);
         this.size = fishSize.BIGGEST;
-        this.setCircle(100, 300, 50);
+        this.setCircle(100, 500, 50);
     }
 }

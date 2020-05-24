@@ -99,6 +99,57 @@ class Debris extends Entity {
     }
 }
 
+class Mermando extends Entity {
+    constructor(scene) {
+        super(scene, 0, GAMEHEIGHT/2, MERMANDO_TEX);
+        this.setScale(0.75);
+        this.setVelocityX(150);
+
+        scene.dialog.setDialog(undefined, "Look out for tentacles!");
+        setTimeout(()=> {
+            scene.dialog.removeDialog();
+        }, MEDIUM_SPAWN_TIME);
+
+    }
+}
+
+class Mcgucket extends Entity {
+    constructor(scene) {
+        super(scene, GAMEWIDTH + 50, GAMEHEIGHT/2, MCGUCKET_TEX);
+        this.setScale(0.75);
+        this.setVelocityX(-150);
+
+        scene.dialog.setDialog(undefined, "I've seen it, I've seen it again!");
+        setTimeout(()=> {
+            scene.dialog.removeDialog();
+        }, MEDIUM_SPAWN_TIME);
+    }
+}
+
+class Durland extends Entity {
+    constructor(scene) {
+        super(scene, GAMEWIDTH + 50, GAMEHEIGHT/2, DURLAND_TEX1);
+        this.setScale(0.75);
+
+        var delay = 7000;
+        scene.tweens.add({
+            targets: this,
+            x: 100,
+            duration: delay,
+            ease: 'Power2'
+        })
+        setTimeout(()=> {
+            this.setTexture(DURLAND_TEX2);
+            scene.dialog.setDialog(undefined, "Hi there friend!");
+        }, MEDIUM_SPAWN_TIME);
+
+        setTimeout(()=> {
+            scene.dialog.removeDialog();
+        }, MEDIUM_SPAWN_TIME*2);
+
+    }
+}
+
 class GabbleWinker extends Entity {
 
     constructor(scene, isLeft) {

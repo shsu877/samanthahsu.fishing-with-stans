@@ -11,18 +11,23 @@ class Dialog {
   constructor(scene) {
     this.scene = scene;
 
-    // var rect = new Phaser.Geom.Rectangle(5, GAMEHEIGHT * 0.75 - 5, GAMEWIDTH - 10, GAMEHEIGHT * 0.25);
-    // var dialogBox = this.scene.add.graphics({ fillStyle: { color: 0xffffff } });
-    // dialogBox.fillRectShape(rect);
-
+    this.rect = new Phaser.Geom.Rectangle(0, 370, GAMEWIDTH, 150);
   }
 
   setDialog(speaker, text) {
     // set image of speaker
-    this.scene.add.image(PORTRAIT_X, PORTRAIT_Y, speaker);
+    if (this.dialogBox != undefined) this.removeDialog();
+    this.dialogBox = this.scene.add.graphics({ fillStyle: { color: 'black' } });
+    this.dialogBox.fillRectShape(this.rect);
+
+    this.icon = this.scene.add.image(PORTRAIT_X, PORTRAIT_Y, speaker);
     this.text = this.scene.add.text(TEXT_X, TEXT_Y, text, dialog_style);
   }
 
-
+  removeDialog() {
+    this.icon.destroy();
+    this.text.destroy();
+    this.dialogBox.destroy();
+  }
 
 }
