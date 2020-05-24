@@ -21,7 +21,7 @@ const DURLAND_TEX2 = "durland2";
 
 
 // GLOBAL
-var lureLeft = 50; // init value
+var lureLeft; // init value
 var sceneMainInst;
 
 const fishSize = {
@@ -115,6 +115,8 @@ class SceneMain extends Phaser.Scene {
         this.physics.add.overlap(this.hook, this.fishes, this.overlayHookFish);
         this.physics.add.overlap(this.hook, this.debrises, this.overlayHookDebris);
         this.physics.add.overlap(this.hook, this.gabbles, this.overlayHookDebris);
+
+        lureLeft = 50;
 
     }
     

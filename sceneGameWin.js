@@ -62,9 +62,9 @@ class SceneGameWin extends Phaser.Scene {
       new Snapshot('sb2w', speaker.FORD, "..."),
 
       new Snapshot('sc1w', speaker.FORD, "Apparently she’s been teaching music to the local aquatic population for generations."),
-      new Snapshot('sc1w', speaker.FORD, "Who knew fish have such a great capacity for intelligence?"),
+      new Snapshot('sc1w', speaker.FORD, "Who knew fish possess such great capacity for intelligence?"),
       new Snapshot('sc1w', speaker.STAN, "Yeah, yeah, but why is she attacking our boat?"),
-      new Snapshot('sc2w', speaker.FORD, "The fish we’ve been catching appear to be her band members..."),
+      new Snapshot('sc2w', speaker.FORD, "The fish we’ve been catching what appear to be her band members..."),
       new Snapshot('sc2w', speaker.FORD, "She wants them back, Stanley."),
       new Snapshot('sc2w', speaker.STAN, "Well, what are we waiting for?"),
       new Snapshot('sc2w', speaker.FORD, "(sigh)"),
