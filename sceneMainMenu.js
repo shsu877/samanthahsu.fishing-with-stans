@@ -13,7 +13,6 @@ class SceneMainMenu extends Phaser.Scene {
       this.input.on('pointerdown', function(pointer) 
       {
         this.scene.start("SceneCutsceneStart"); 
-        
       }, this); 
     }
   }

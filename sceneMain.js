@@ -108,7 +108,6 @@ class SceneMain extends Phaser.Scene {
         
         this.lureText = this.add.text(textX, 30, LURE_TEXT + lureLeft, { fontSize: '16px', fill: '#000'});
 
-    
         // HOOK
         this.hook = new Hook(this);
          

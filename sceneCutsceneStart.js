@@ -102,7 +102,8 @@ class SceneCutsceneStart extends Phaser.Scene {
 
       this.input.on('pointerdown', function(pointer) 
       {
-        if (seqIndex >= startSeqText.length - 1) {
+        if (seqIndex >= startSeqText.length) return;
+        if (seqIndex == startSeqText.length - 1) {
           var img = this.add.image(GAMEWIDTH/2,GAMEHEIGHT/2,'bg-full');
           const delay = 3000;
           this.tweens.add({
@@ -115,6 +116,7 @@ class SceneCutsceneStart extends Phaser.Scene {
           setTimeout(()=> {
             this.scene.start("SceneMain"); 
           }, delay)
+          seqIndex++;
           return;
         }
         seqIndex++;
