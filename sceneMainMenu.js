@@ -3,7 +3,17 @@ class SceneMainMenu extends Phaser.Scene {
       super({ key: "SceneMainMenu" });
     }
   
+    preload() {
+      this.load.image('startBG', 'assets/start.png');
+    }
+
     create() {
-      this.scene.start("SceneMain");
+      var img = this.add.image(0,0,'startBG').setOrigin(0, 0);
+
+      this.input.on('pointerdown', function(pointer) 
+      {
+        this.scene.start("SceneCutsceneStart"); 
+        
+      }, this); 
     }
   }

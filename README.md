@@ -1,4 +1,4 @@
 # fishing-with-stans
-A Gravity Falls themed fishing mini-game. Based on Club Penguin nostalgia.
+A Gravity Falls themed fishing mini-game. Inspired by Club Penguin nostalgia.
 
-UNDER CONSTRUCTION
+GAME UNDER CONSTRUCTION
