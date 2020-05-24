@@ -46,6 +46,8 @@ class SceneMain extends Phaser.Scene {
       
     preload ()
     {     
+        this.add.text(secretTextX, secretTextY, secretText2, secretTextStyle);
+
         this.load.image('bg', 'assets/bg.png');
         this.load.image('hook', 'assets/fishing-line.png');
         this.load.image('blank', 'assets/hook-fish-hitbox.png')

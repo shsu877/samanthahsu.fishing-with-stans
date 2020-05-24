@@ -12,7 +12,6 @@ class Fish extends Entity {
     }
     // play running away animation >> tween + anim >> bottom edge of screen >> destroy
     flee() {
-        console.log("IM FREEEEEE");
         this.destroy();
     }
 }

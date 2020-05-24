@@ -4,6 +4,8 @@ class SceneGameWin extends Phaser.Scene {
   }
 
   preload() {
+    this.add.text(secretTextX, secretTextY, secretText3, secretTextStyle);
+
     this.load.image('sa1w', 'assets/cutscene-win-a1.png');
     this.load.image('sb1w', 'assets/cutscene-win-b1.png');
     this.load.image('sb2w', 'assets/cutscene-win-b2.png');
@@ -29,7 +31,6 @@ class SceneGameWin extends Phaser.Scene {
 
   create() {
     this.createArray();
-    console.log("YOU WIN!");
     var seqIndex = 0;
     this.add.image(0, 0, this.winSeqText[seqIndex].image).setOrigin(0,0);
 

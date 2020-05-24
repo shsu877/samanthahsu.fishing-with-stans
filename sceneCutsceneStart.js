@@ -51,13 +51,14 @@ startSeqText.push(
   new Snapshot('sf5', speaker.STAN, "Don’t even dream about it!"),
 )
 
-
 class SceneCutsceneStart extends Phaser.Scene {
     constructor() {      
       super({ key: "SceneCutsceneStart" });
     }
   
     preload() {
+      this.add.text(secretTextX, secretTextY, secretText1, secretTextStyle);
+
       this.load.image('sa1', 'assets/cutscene-start-a1.png');
       this.load.image('sa2', 'assets/cutscene-start-a2.png');
       this.load.image('sb1', 'assets/cutscene-start-b1.png');
