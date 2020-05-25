@@ -10,4 +10,5 @@ Further developement goals:
 May 24: version 1.0
 - full game playability with soft levels
 - cutscenes: start, win, lose
+
 May 17: start of project
