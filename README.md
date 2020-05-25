@@ -7,8 +7,10 @@ Further developement goals:
 - visual scorekeeping
 - mobile playability and scaling
 
-May 24: version 1.0
+May 24: 
+- version 1.0
 - full game playability with soft levels
 - cutscenes: start, win, lose
 
-May 17: start of project
+May 17: 
+- start of project
