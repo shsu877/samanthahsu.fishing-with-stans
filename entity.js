@@ -26,7 +26,7 @@ class Hook extends Entity {
             if (this.hasFish())
                 this.setFishY();
         }, this);
-        scene.input.on('pointerdown', function(pointer) 
+        scene.input.on('pointerup', function(pointer) 
         {
             scene.letFishGo();  
         }, this);  

@@ -118,8 +118,6 @@ class SceneMain extends Phaser.Scene {
         this.physics.add.overlap(this.hook, this.fishes, this.overlayHookFish);
         this.physics.add.overlap(this.hook, this.debrises, this.overlayHookDebris);
         this.physics.add.overlap(this.hook, this.gabbles, this.overlayHookDebris);
-
-        
     }
     
     update() {
