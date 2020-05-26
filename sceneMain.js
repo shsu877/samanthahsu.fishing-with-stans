@@ -22,7 +22,7 @@ const STARTING_LURE = 50;
 
 
 // GLOBAL
-var lureLeft = STARTING_LURE; // init value
+var lureLeft = 0; // init value
 var sceneMainInst;
 
 const fishSize = {
@@ -88,6 +88,7 @@ class SceneMain extends Phaser.Scene {
 
         this.spawnSmall();
         sceneMainInst = this; // for calls from overlap
+        lureLeft = STARTING_LURE;
     }
 
     addRecurringTimeEvent(delay, callback) {
@@ -118,7 +119,7 @@ class SceneMain extends Phaser.Scene {
         this.physics.add.overlap(this.hook, this.debrises, this.overlayHookDebris);
         this.physics.add.overlap(this.hook, this.gabbles, this.overlayHookDebris);
 
-        this.lureLeft = STARTING_LURE;
+        
     }
     
     update() {
