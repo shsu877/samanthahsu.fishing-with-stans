@@ -1,7 +1,7 @@
 # fishing-with-stans
 A Gravity Falls themed fishing mini-game inspired by Club Penguin nostalgia.
 
-Play Here: https://sealbatross.itch.io/fishing-with-stans
+Play Here: https://samanthahsu.github.io/samanthahsu.fishing-with-stans/
 
 Further developement goals:
 - sound effects and bgm
