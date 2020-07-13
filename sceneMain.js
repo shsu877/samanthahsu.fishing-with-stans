@@ -70,6 +70,10 @@ class SceneMain extends Phaser.Scene {
         this.load.image(DURLAND_TEX1, 'assets/durland-01.png');
         this.load.image(DURLAND_TEX2, 'assets/durland-02.png');
 
+        // this.load.audio('bgm', 'assets/underwater-bgm.png');
+        // this.load.audio('beatM', 'assets/beat.wav');
+        // this.load.audio('highM', 'assets/high.wav');
+
         // VARIABLES
         this.score = 0;
         this.scoreText;
@@ -103,6 +107,16 @@ class SceneMain extends Phaser.Scene {
     
     
     create() {
+        // var bgm = this.sound.add('bgm', {loop = true});
+        // bgm.play();
+        // var musicConfig = {
+        //     mute: false,
+        //     volume: 1,
+        //     loop: true
+        //   }
+        // var beat_sfx = this.sound.add('beatM', musicConfig).play();
+        // this.small_sfx = this.sound.add('highM', musicConfig);
+
         // add background image
         this.add.image(0, 0, 'bg').setOrigin(0,0);
 
@@ -184,6 +198,7 @@ class SceneMain extends Phaser.Scene {
 
         if (fish.size == fishSize.SMALL && !hook.hasFish()) {
             hook.addFish(fish);
+            this.small_sfx.play();
         } else if (!hook.hasFish()) {
             return;
         } else if (
@@ -198,6 +213,7 @@ class SceneMain extends Phaser.Scene {
         this.time.addEvent({
             delay: BIG_SPAWN_TIME / 2,
             callback: function() {
+                bgm.stop();
                 if (isWin) {
                     this.scene.start("SceneGameWin");
                 } else {
