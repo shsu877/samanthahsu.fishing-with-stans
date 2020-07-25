@@ -70,10 +70,6 @@ class SceneMain extends Phaser.Scene {
         this.load.image(DURLAND_TEX1, 'assets/durland-01.png');
         this.load.image(DURLAND_TEX2, 'assets/durland-02.png');
 
-        // this.load.audio('bgm', 'assets/underwater-bgm.png');
-        // this.load.audio('beatM', 'assets/beat.wav');
-        // this.load.audio('highM', 'assets/high.wav');
-
         // VARIABLES
         this.score = 0;
         this.scoreText;
@@ -107,15 +103,6 @@ class SceneMain extends Phaser.Scene {
     
     
     create() {
-        // var bgm = this.sound.add('bgm', {loop = true});
-        // bgm.play();
-        // var musicConfig = {
-        //     mute: false,
-        //     volume: 1,
-        //     loop: true
-        //   }
-        // var beat_sfx = this.sound.add('beatM', musicConfig).play();
-        // this.small_sfx = this.sound.add('highM', musicConfig);
 
         // add background image
         this.add.image(0, 0, 'bg').setOrigin(0,0);
@@ -141,7 +128,6 @@ class SceneMain extends Phaser.Scene {
 
         if (this.biggestFish != undefined && this.biggestFish.x >= GAMEWIDTH)
             sceneMainInst.endGame(false);
-        if (this.biggestFish != undefined) console.log(this.biggestFish.x);
     }
 
     // lets the fish off the hook, it within range of catching, add to score, otherwise it runs away
@@ -173,7 +159,6 @@ class SceneMain extends Phaser.Scene {
                 this.score += BIG_SCORE;
                 break;
             case fishSize.BIGGEST:
-                // stan: what why ain't the counter going up? Better not be like on of those dumb money suckling arcade games >:[
                 this.time.addEvent({
                     delay: BIG_SPAWN_TIME/2,
                     callback: function() {
@@ -189,16 +174,12 @@ class SceneMain extends Phaser.Scene {
     // attaches fish to the hook if no current fish on the hook
     overlayHookFish(hook, fish) {
         if (lureLeft == 0) {
-            // ford: i miscalculated our abilities - should've ripped it into more pieces
-            // stan: told ya they'd be a great hit
-            // ford: we're throwing paper into the ocean stanley
             sceneMainInst.endGame(false);
             return;
         }
 
         if (fish.size == fishSize.SMALL && !hook.hasFish()) {
             hook.addFish(fish);
-            this.small_sfx.play();
         } else if (!hook.hasFish()) {
             return;
         } else if (
@@ -213,7 +194,6 @@ class SceneMain extends Phaser.Scene {
         this.time.addEvent({
             delay: BIG_SPAWN_TIME / 2,
             callback: function() {
-                bgm.stop();
                 if (isWin) {
                     this.scene.start("SceneGameWin");
                 } else {

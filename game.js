@@ -15,9 +15,6 @@ var config = {
             // debug: true
         }
     },
-    audio: {
-        disableWebAudio: true
-    },
     scene: [
         SceneMainMenu,
         SceneMain,
