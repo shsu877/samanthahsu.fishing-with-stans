@@ -11,7 +11,7 @@
   "dependencies": {
     "electron": "^7.1.6",
     "http-server": "^0.12.1",
-    "phaser": "^3.23.0"
+    "phaser": "^3.55.2"
   },
   "devDependencies": {},
   "repository": {
